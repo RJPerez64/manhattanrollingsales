@@ -36,3 +36,4 @@ Here are the steps I took to clean the Manhattan Rolling Sales dataset:
     it yellow and its text yellow as well; otherwise, keep it as usual.
 19) After determining the median Sale_Price ($1,250,000), conditional formatting for Sale_Price: if greater than that median, make it green; if it's less than the median, then make
     it red; if it's equal to the median, make it yellow.
+20) Added a unique Property_ID for each property to make it easier to identify going forward and within Tableau.

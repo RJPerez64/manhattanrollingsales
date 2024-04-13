@@ -1,0 +1,38 @@
+Here are the steps I took to clean the Manhattan Rolling Sales dataset:
+
+01) Removed all properties with Sale_Price of $0, as I wanted to focus on sales where money changed hands.
+02) Checked for duplicates and removed them (5 were found).
+03) Changed all of the column names to be proper and have underscores instead of spaces.
+04) Used Proper() on NEIGHBORHOOD to create Proper_Neighborhood for better readability.
+05) Renamed ADDRESS to ADDRESS + APARTMENT NUMBER, then used IF() with ISNUMBER to see if there was a comma within ADDRESS + APARTMENT NUMBER.
+    If so, the newly made Address column would include only the information before that comma (TEXTBEFORE()); if there isn't one, the whole address would included.
+    A similar process occurred for the newly made Apartment_Number column, this time with TEXTAFTER() being used instead and None being placed in that column if
+    there was no comma in the ADDRESS + APARTMENT NUMBER column.
+06) Produced Full_Address column, using CONCAT() to combine Address, the string ", New York, New York ", and the property's Zip Code. This would be used to find
+    Longitude and Latitude later.
+07) Produced Price_per_Unit column, where IF() and AND() function was used to determine whether Total_Units was a number (ISNUMBER()) and was greater than 0. If
+    both conditions were met, then the property's Price would be divided by the property's Total_Units; else, 0 would be used.
+08) Price_per_Residential_Unit and Price_per_Commercial_Unit would be built like Price_per_Unit, but using Residential_Units and Commercial_Units instead of 
+    Total_Units, respectively. This would also be the case for Land_to_Building_Ratio, with both Land_Square_Feet and Gross_Square_Feet needing to be a number
+    and greater than 0. Price_per_Square_Foot and Price_per_Land_Square_Foot was also similar in this aspect.
+09) Created Age_of_Property column by determining if there was a Year_Built given for the property (ISNUMBER()). If so, subract the current year
+    (YEAR(TODAY())) by the Year_Built of the property. If not, place 0 (otherwise, 2024 or your current year will be listed).
+10) Used A.CRE's Geocoding Excel Add-in (https://www.adventuresincre.com/geocoding-excel-add-in/) to find each property's Longitude and Latitude, 
+    which would be used when creating my dashboard in Tableau. I then copied the values to separate columns and deleted the original columns to avoid 
+    potentially using more of Google Cloud.
+11) Changed Sale_Price into Accounting format to recognize it as dollar amounts.
+12) Created Sale_Month column by getting the month from the Sale_Date column (MONTH()).
+13) Created Sale_Quarter column based on which month the property sale occurred. Since we started in March instead of January, manual quarters had to be developed
+    using ISNUMBER with MATCH() within it. MATCH looked into the Sale_Month column and checked if it matched one of the months that would fit into that quarter
+    (Q1 = 3, 4, or 5; Q2 = 6, 7, 8; Q3 = 9, 10 or 11; Q4 = 12, 1, or 2). This makes it easier to make charts in Tableau without needing to make new columns in there.
+14) Created Property_Type column determining which property type each property is. This is based on residential and commercial units; Residential if only residential units,
+    Commercial if only commercial units, Mixed-Use if at least one of each, and Coop/Other if there's none of both.
+15) Created Has_Elevator column to see which properties have elevators. This is based on using ISNUMBER() and SEARCH() to find if "ELEVATOR" is within the Building_Class_Category
+    of the property. Put 1 if so and 0 if not.
+16) Created Has_Commercial and Has_Residential columns to see if the property has any of either. 1 if so and 0 if not.
+17) Hid the following columns, as they are not the focus of this analysis: BOROUGH, NEIGHBORHOOD, TAX CLASS AT PRESENT, BLOCK, LOT, EASEMENT, BUILDING CLASS AT PRESENT, ADDRESS +
+    APARTMENT NUMBER, TAX CLASS AT TIME OF SALE, BUILDING CLASS AT TIME OF SALE
+18) Conditional Formatting for Year_Built: If less than 1900 (or has no value), then make the cell red and text red as well; if the cell's value is between 1900 and 2000, then make 
+    it yellow and its text yellow as well; otherwise, keep it as usual.
+19) After determining the median Sale_Price ($1,250,000), conditional formatting for Sale_Price: if greater than that median, make it green; if it's less than the median, then make
+    it red; if it's equal to the median, make it yellow.
